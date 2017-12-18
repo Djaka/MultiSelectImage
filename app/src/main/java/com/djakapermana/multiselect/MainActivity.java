@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     public int REQUEST_CODE_PICKER;
     RecyclerView recImageViewer;
     ImageAdapter adapter;
+    private static String EXTRA_IMAGE = "extra_image";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,11 @@ public class MainActivity extends AppCompatActivity {
                 start();
             }
         });
+
+        if(savedInstanceState != null){
+            images = savedInstanceState.getParcelableArrayList(EXTRA_IMAGE);
+            printImages(images);
+        }
     }
 
     @Override
@@ -73,8 +80,9 @@ public class MainActivity extends AppCompatActivity {
 //        textView.setText(stringBuffer.toString());
 
         adapter = new ImageAdapter(images,this);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this,4);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
-        recImageViewer.setLayoutManager(linearLayoutManager);
+        recImageViewer.setLayoutManager(gridLayoutManager);
         recImageViewer.setAdapter(adapter);
     }
 
@@ -87,5 +95,11 @@ public class MainActivity extends AppCompatActivity {
                 .imageFullDirectory(Environment.getExternalStorageDirectory().getPath()) // can be full path
                 .origin(images) // original selected images, used in multi mode
                 .start(REQUEST_CODE_PICKER); // start image picker activity with request code
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(EXTRA_IMAGE,images);
     }
 }
