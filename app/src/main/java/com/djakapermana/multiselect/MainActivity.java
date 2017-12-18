@@ -4,8 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 
@@ -27,6 +28,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Toolbar toolbar = new Toolbar(this);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(R.string.app_name);
+
         buttonSelectImage = findViewById(R.id.btnSelectImage);
         recImageViewer = findViewById(R.id.recImage);
 
@@ -44,14 +49,13 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_PICKER && resultCode == RESULT_OK && data != null) {
             images = (ArrayList<Image>) ImagePicker.getImages(data);
             printImages(images);
-            return;
         }
     }
 
     private void printImages(ArrayList<Image> images) {
-        if (images == null){
-            return;
-        }
+//        if (images == null){
+//            return;
+//        }
 
 //        StringBuilder stringBuffer = new StringBuilder();
 //        for (int i = 0, l = images.size(); i < l; i++) {
@@ -60,8 +64,8 @@ public class MainActivity extends AppCompatActivity {
 //        textView.setText(stringBuffer.toString());
 
         adapter = new ImageAdapter(images,this);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this,4);
-        recImageViewer.setLayoutManager(gridLayoutManager);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
+        recImageViewer.setLayoutManager(linearLayoutManager);
         recImageViewer.setAdapter(adapter);
     }
 
@@ -75,6 +79,4 @@ public class MainActivity extends AppCompatActivity {
                 .origin(images) // original selected images, used in multi mode
                 .start(REQUEST_CODE_PICKER); // start image picker activity with request code
     }
-
-
 }

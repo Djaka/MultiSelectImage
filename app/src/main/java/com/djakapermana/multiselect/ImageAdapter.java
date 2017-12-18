@@ -1,5 +1,6 @@
 package com.djakapermana.multiselect;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,6 +55,15 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
                 Toast.makeText(activity, "Remove: " + imagePath, Toast.LENGTH_SHORT).show();
             }
         });
+
+        holder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(),ZoomImageActivity.class);
+                intent.putExtra(ZoomImageActivity.IMAGE_EXTRA, imagePath);
+                view.getContext().startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -63,7 +73,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        ImageView imageView, imageRemove;
+        ImageView imageRemove, imageView;
 
         public ViewHolder(View itemView) {
             super(itemView);
