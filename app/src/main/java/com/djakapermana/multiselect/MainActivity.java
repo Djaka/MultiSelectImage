@@ -49,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void printImages(ArrayList<Image> images) {
-        if (images.size() < 1){
-
+        if (images == null){
+            return;
         }
 
 //        StringBuilder stringBuffer = new StringBuilder();
