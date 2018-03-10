@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button buttonSelectImage;
+    Button buttonSelectImage, buttonSaveImage;
     private ArrayList<Image> images = new ArrayList<>();
     public int REQUEST_CODE_PICKER;
     RecyclerView recImageViewer;
@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.app_name);
 
         buttonSelectImage = findViewById(R.id.btnSelectImage);
+        buttonSaveImage = findViewById(R.id.btnSave);
         recImageViewer = findViewById(R.id.recImage);
 
         buttonSelectImage.setOnClickListener(new View.OnClickListener() {
@@ -46,10 +47,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        buttonSaveImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveImage();
+            }
+        });
+
         if(savedInstanceState != null){
             images = savedInstanceState.getParcelableArrayList(EXTRA_IMAGE);
             printImages(images);
         }
+    }
+
+    private void saveImage() {
+
     }
 
     @Override
@@ -82,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ImageAdapter(images,this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this,4);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
-        recImageViewer.setLayoutManager(gridLayoutManager);
+        recImageViewer.setLayoutManager(linearLayoutManager);
         recImageViewer.setAdapter(adapter);
     }
 
