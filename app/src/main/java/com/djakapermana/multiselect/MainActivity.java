@@ -1,6 +1,8 @@
 package com.djakapermana.multiselect;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +10,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -16,7 +19,13 @@ import android.widget.Button;
 import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.model.Image;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -58,10 +67,103 @@ public class MainActivity extends AppCompatActivity {
             images = savedInstanceState.getParcelableArrayList(EXTRA_IMAGE);
             printImages(images);
         }
+
+        loadImage();
     }
 
     private void saveImage() {
+        File imagedir = new File(Environment.getExternalStorageDirectory() + "/OFU");
+        File thumbnilePath = new File(imagedir + "/thumbnile/");
+        if (!imagedir.exists()) {
+            File pathImage = new File("/sdcard/OFU/");
+            pathImage.mkdirs();
 
+            thumbnilePath = new File(pathImage+"/thumbnile/");
+            thumbnilePath.mkdir();
+
+        }
+
+        for(Image img: images){
+            Tblimage tblimage = new Tblimage();
+
+            Bitmap bitmap = BitmapFactory.decodeFile(img.getPath());
+            Bitmap bitmap1 = scaleDown(bitmap,false);
+            Bitmap bitmap2 = createThumbnile(bitmap, true);
+
+            String UUID = java.util.UUID.randomUUID().toString();
+
+            File fileImg = new File(imagedir,UUID+".jpeg");
+            File fileThb = new File(thumbnilePath, UUID+".jpeg");
+
+            OutputStream outImage = null, outThb = null;
+
+            try {
+                outImage = new FileOutputStream(fileImg);
+                outThb = new FileOutputStream(fileThb);
+                bitmap1.compress(Bitmap.CompressFormat.JPEG,50,outImage);
+                outImage.flush();
+                outImage.close();
+
+                bitmap2.compress(Bitmap.CompressFormat.JPEG,50,outThb);
+                outThb.flush();
+                outThb.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            tblimage.setRes(UUID + ".jpeg");
+            tblimage.save();
+        }
+    }
+
+    public static Bitmap scaleDown(Bitmap realImage, boolean filter) {
+
+        final int maxSize = 1024;
+        int width;
+        int height;
+        int inWidth = realImage.getWidth();
+        int inHeight = realImage.getHeight();
+        if(inWidth > inHeight){
+            width = maxSize;
+            height = (inHeight * maxSize) / inWidth;
+        } else {
+            height = maxSize;
+            width = (inWidth * maxSize) / inHeight;
+        }
+
+
+        Bitmap newBitmap = Bitmap.createScaledBitmap(realImage, width, height, filter);
+        return newBitmap;
+    }
+
+    public static Bitmap createThumbnile(Bitmap realImage, boolean filter) {
+
+        final int maxSize = 500;
+        int width;
+        int height;
+
+        int inWidth = realImage.getWidth();
+        int inHeight = realImage.getHeight();
+        if(inWidth > inHeight){
+            width = maxSize;
+            height = (inHeight * maxSize) / inWidth;
+        } else {
+            height = maxSize;
+            width = (inWidth * maxSize) / inHeight;
+        }
+
+        Bitmap newBitmap = Bitmap.createScaledBitmap(realImage, width, height, filter);
+        return newBitmap;
+    }
+
+    private void loadImage(){
+        List<Tblimage> tblimage = Tblimage.listAll(Tblimage.class);
+
+        for(int i = 0; i<tblimage.size(); i++){
+            Log.d("Djaka", "loadImage: " + tblimage.get(i).getRes());
+        }
     }
 
     @Override
