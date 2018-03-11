@@ -23,5 +23,4 @@ public class Tblimage extends SugarRecord {
     public void setRes(String path) {
         this.path = path;
     }
-
 }

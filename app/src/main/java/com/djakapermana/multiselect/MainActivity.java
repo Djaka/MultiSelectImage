@@ -73,13 +73,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveImage() {
         File imagedir = new File(Environment.getExternalStorageDirectory() + "/OFU");
-        File thumbnilePath = new File(imagedir + "/thumbnile/");
+        File thumbnailsPath = new File(imagedir + "/thumbnails/");
         if (!imagedir.exists()) {
             File pathImage = new File("/sdcard/OFU/");
             pathImage.mkdirs();
 
-            thumbnilePath = new File(pathImage+"/thumbnile/");
-            thumbnilePath.mkdir();
+            thumbnailsPath = new File(pathImage+"/thumbnails/");
+            thumbnailsPath.mkdir();
 
         }
 
@@ -88,12 +88,12 @@ public class MainActivity extends AppCompatActivity {
 
             Bitmap bitmap = BitmapFactory.decodeFile(img.getPath());
             Bitmap bitmap1 = scaleDown(bitmap,false);
-            Bitmap bitmap2 = createThumbnile(bitmap, true);
+            Bitmap bitmap2 = createThumbnails(bitmap, true);
 
             String UUID = java.util.UUID.randomUUID().toString();
 
             File fileImg = new File(imagedir,UUID+".jpeg");
-            File fileThb = new File(thumbnilePath, UUID+".jpeg");
+            File fileThb = new File(thumbnailsPath, UUID+".jpeg");
 
             OutputStream outImage = null, outThb = null;
 
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         return newBitmap;
     }
 
-    public static Bitmap createThumbnile(Bitmap realImage, boolean filter) {
+    public static Bitmap createThumbnails(Bitmap realImage, boolean filter) {
 
         final int maxSize = 500;
         int width;
@@ -183,15 +183,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void printImages(ArrayList<Image> images) {
-//        if (images == null){
-//            return;
-//        }
-
-//        StringBuilder stringBuffer = new StringBuilder();
-//        for (int i = 0, l = images.size(); i < l; i++) {
-//            stringBuffer.append(images.get(i).getPath()).append("\n");
-//        }
-//        textView.setText(stringBuffer.toString());
 
         adapter = new ImageAdapter(images,this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this,4);
@@ -201,14 +192,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void start(){
-        ImagePicker.create(MainActivity.this)
-                .folderMode(false)
-                .limit(4) // max images can be selected (99 by default)
-                .showCamera(true) // show camera or not (true by default)
-                .imageDirectory("Camera")   // captured image directory name ("Camera" folder by default)
-                .imageFullDirectory(Environment.getExternalStorageDirectory().getPath()) // can be full path
-                .origin(images) // original selected images, used in multi mode
-                .start(REQUEST_CODE_PICKER); // start image picker activity with request code
+        ImagePicker picker = ImagePicker.create(this);
+        picker.imageDirectory(Environment.getExternalStorageDirectory() + "/OFU");
+        picker.folderMode(true);
+        picker.showCamera(true);
+        picker.limit(4);
+        picker.origin(images);
+        picker.imageFullDirectory(Environment.getExternalStorageDirectory().getPath());
+        picker.start(REQUEST_CODE_PICKER);
+
+//        ImagePicker.create(MainActivity.this)
+//                .folderMode(false)
+//                .limit(4) // max images can be selected (99 by default)
+//                .showCamera(true) // show camera or not (true by default)
+//                .imageDirectory("Pictures")   // captured image directory name ("Camera" folder by default)
+//                .imageFullDirectory(Environment.getExternalStorageDirectory().getPath()) // can be full path
+//                .origin(images) // original selected images, used in multi mode
+//                .start(REQUEST_CODE_PICKER); // start image picker activity with request code
     }
 
     @Override
